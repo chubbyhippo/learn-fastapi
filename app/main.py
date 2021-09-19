@@ -63,18 +63,18 @@ def evaluate(board: list[list[int]], player: int, opponent: int):
 def minimax(board: list[list[int]], depth, is_max: bool, player: int, opponent: int):
     score = evaluate(board, player, opponent)
 
-    # If Maximizer has won the game return his/her
-    # evaluated score
+    # If Maximizer has won
+    # return evaluated score
     if score == 10:
         return score
 
-    # If Minimizer has won the game return his/her
-    # evaluated score
+    # If Minimizer has won
+    # return evaluated score
     if score == -10:
         return score
 
     # If there are no more moves and no winner then
-    # it is a tie
+    # It is a tie
     if not is_moves_left(board):
         return 0
 
@@ -159,7 +159,6 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
