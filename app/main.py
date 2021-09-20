@@ -17,19 +17,19 @@ class Point:
         self.y = y
 
 
-def is_moves_left(board: list[list[int]]):
-    for i in range(3):
-        for j in range(3):
-            if board[i][j] == 0:
-                return True
-    return False
-
-
 def is_first_turn(board: list[list[int]]):
     if board == [[0, 0, 0],
                  [0, 0, 0],
                  [0, 0, 0]]:
         return True
+    return False
+
+
+def is_moves_left(board: list[list[int]]):
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == 0:
+                return True
     return False
 
 
