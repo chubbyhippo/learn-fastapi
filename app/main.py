@@ -1,3 +1,5 @@
+import random
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,6 +22,12 @@ def is_moves_left(board: list[list[int]]):
         for j in range(3):
             if board[i][j] == 0:
                 return True
+    return False
+
+
+def is_first_turn(board: list[list[int]]):
+    if board == [[0, 0, 0], [0, 0, 0], [0, 0, 0]]:
+        return True
     return False
 
 
@@ -124,6 +132,9 @@ def minimax(board: list[list[int]], depth, is_max: bool, player: int, opponent: 
 
 # This will return the best possible move for the player
 def find_best_move(board: list[list[int]], player: int, opponent: int):
+    if is_first_turn(board):
+        return Point(random.randint(0, 2), random.randint(0, 2))
+
     best_val = -9999
     best_move = Point(-1, -1)
 
