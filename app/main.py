@@ -26,7 +26,9 @@ def is_moves_left(board: list[list[int]]):
 
 
 def is_first_turn(board: list[list[int]]):
-    if board == [[0, 0, 0], [0, 0, 0], [0, 0, 0]]:
+    if board == [[0, 0, 0],
+                 [0, 0, 0],
+                 [0, 0, 0]]:
         return True
     return False
 
