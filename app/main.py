@@ -34,7 +34,7 @@ def is_moves_left(board: list[list[int]]):
 
 
 def evaluate(board: list[list[int]], player: int, opponent: int):
-    # Checking for rows if x or o is the winner
+    # Checking for rows if player or opponent is the winner
     for row in range(3):
         if board[row][0] == board[row][1] and board[row][1] == board[row][2]:
             if board[row][0] == player:
@@ -42,7 +42,7 @@ def evaluate(board: list[list[int]], player: int, opponent: int):
             elif board[row][0] == opponent:
                 return -1
 
-    # Checking for columns if x or o is the winner
+    # Checking for columns if player or opponent is the winner
     for col in range(3):
 
         if board[0][col] == board[1][col] and board[1][col] == board[2][col]:
@@ -52,7 +52,7 @@ def evaluate(board: list[list[int]], player: int, opponent: int):
             elif board[0][col] == opponent:
                 return -1
 
-    # Checking for diagonals if x or o is the winner
+    # Checking for diagonals if player or opponent is the winner
     if board[0][0] == board[1][1] and board[1][1] == board[2][2]:
 
         if board[0][0] == player:
@@ -67,31 +67,29 @@ def evaluate(board: list[list[int]], player: int, opponent: int):
         elif board[0][2] == opponent:
             return -1
 
-    # If none of them have won then return 0
+    # If none of them have won the match then return 0
     return 0
 
 
 def minimax(board: list[list[int]], depth, is_max: bool, player: int, opponent: int):
     score = evaluate(board, player, opponent)
 
-    # If Maximizer has won
-    # return evaluated score
+    # If maximizer has won return evaluated score
     if score == 1:
         return score
 
-    # If Minimizer has won
-    # return evaluated score
+    # If minimizer has won return evaluated score
     if score == -1:
         return score
 
-    # If there are no more moves and no winner then
+    # If there are no moves left and no winner
     # It is a draw
     if not is_moves_left(board):
         return 0
 
-    # If this maximizer's move
+    # If maximizer moves
     if is_max:
-        best = -9999
+        optimal = -100
 
         # Traverse all cells
         for i in range(3):
@@ -99,20 +97,19 @@ def minimax(board: list[list[int]], depth, is_max: bool, player: int, opponent: 
 
                 # Check if cell is empty
                 if board[i][j] == 0:
-                    # Make the move
+                    # Move
                     board[i][j] = player
 
-                    # Call minimax recursively and choose
-                    # the maximum value
-                    best = max(best, minimax(board, depth + 1, not is_max, player, opponent))
+                    # Call minimax recursively and take max value
+                    optimal = max(optimal, minimax(board, depth + 1, not is_max, player, opponent))
 
                     # Undo the move
                     board[i][j] = 0
-        return best
+        return optimal
 
-    # If this minimizer's move
+    # If minimizer moves
     else:
-        best = 9999
+        optimal = 100
 
         # Traverse all cells
         for i in range(3):
@@ -120,53 +117,50 @@ def minimax(board: list[list[int]], depth, is_max: bool, player: int, opponent: 
 
                 # Check if cell is empty
                 if board[i][j] == 0:
-                    # Make the move
+                    # move
                     board[i][j] = opponent
 
-                    # Call minimax recursively and choose
-                    # the minimum value
-                    best = min(best, minimax(board, depth + 1, not is_max, player, opponent))
+                    # Call minimax recursively and take min value
+                    optimal = min(optimal, minimax(board, depth + 1, not is_max, player, opponent))
 
                     # Undo the move
                     board[i][j] = 0
-        return best
+        return optimal
 
 
-# This will return the best possible move for the player
-def find_best_move(board: list[list[int]], player: int, opponent: int):
+# This will return the optimal move for the player
+def find_optimal_move(board: list[list[int]], player: int, opponent: int):
     if is_first_turn(board):
         return Point(random.randint(0, 2), random.randint(0, 2))
 
-    best_val = -9999
-    best_move = Point(-1, -1)
+    optimal_val = -100
+    optimal_move = None
 
-    # Traverse all cells, evaluate minimax function for
-    # all empty cells. And return the cell with optimal
-    # value
+    # Traverse all cells, find the optimal
     for i in range(3):
         for j in range(3):
 
             # Check if cell is empty
             if board[i][j] == 0:
 
-                # Make the move
+                # Move
                 board[i][j] = player
 
-                # compute evaluation function for this
-                # move
+                # Evaluate this move
                 move_val = minimax(board, 0, False, player, opponent)
 
                 # Undo the move
                 board[i][j] = 0
 
-                # If the value of the current move is
-                # more than the best value, then update
-                # best
-                if move_val > best_val:
-                    best_move = Point(i, j)
-                    best_val = move_val
+                # Update the best value
+                if move_val > optimal_val:
+                    optimal_move = Point(i, j)
+                    optimal_val = move_val
+                elif move_val == optimal_val and random.random() < .5:
+                    optimal_move = Point(i, j)
+                    optimal_val = move_val
 
-    return best_move
+    return optimal_move
 
 
 app = FastAPI()
@@ -193,7 +187,7 @@ def next_turn(data_source: DataSource):
         player = 2
         opponent = 1
 
-    return find_best_move(board, player, opponent)
+    return find_optimal_move(board, player, opponent)
 
 
 if __name__ == "__main__":
